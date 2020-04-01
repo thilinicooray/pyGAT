@@ -6,6 +6,8 @@ from layers import GraphAttentionLayer, SpGraphAttentionLayer
 
 class GAT(nn.Module):
     def __init__(self, nfeat, nhid, nclass, dropout, alpha, nheads):
+
+        print('init sizes ', nfeat, nhid, nclass, dropout, alpha, nheads)
         """Dense version of GAT."""
         super(GAT, self).__init__()
         self.dropout = dropout
