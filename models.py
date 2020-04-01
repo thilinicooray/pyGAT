@@ -7,7 +7,6 @@ from layers import GraphAttentionLayer, SpGraphAttentionLayer
 class GAT(nn.Module):
     def __init__(self, nfeat, nhid, nclass, dropout, alpha, nheads):
 
-        print('init sizes ', nfeat, nhid, nclass, dropout, alpha, nheads)
         """Dense version of GAT."""
         super(GAT, self).__init__()
         self.dropout = dropout
@@ -16,7 +15,7 @@ class GAT(nn.Module):
         for i, attention in enumerate(self.attentions):
             self.add_module('attention_{}'.format(i), attention)
 
-        self.out_att = GraphAttentionLayer(nhid * nheads, nclass, dropout=dropout, alpha=alpha, concat=False)
+        self.out_att = GraphAttentionLayer(nhid * nheads + nfeat, nclass, dropout=dropout, alpha=alpha, concat=False)
 
     def forward(self, x_org, adj):
 
@@ -24,9 +23,7 @@ class GAT(nn.Module):
         x = torch.cat([att(x, adj) for att in self.attentions], dim=1)
         x = F.dropout(x, self.dropout, training=self.training)
 
-        print('infor ', x_org.size(), adj.size(), x.size())
-
-        x = F.elu(self.out_att(x, adj))
+        x = F.elu(self.out_att(torch.cat([x, x_org],-1), adj))
         return F.log_softmax(x, dim=1)
 
 
