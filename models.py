@@ -21,7 +21,7 @@ class GAT(nn.Module):
         self.out_att = GraphAttentionLayer(nhid * nheads + nfeat, nclass, dropout=dropout, alpha=alpha, concat=False)
 
     def forward(self, x_org, adj):
-        x = self.encoder(x_org)
+        x = torch.mm(x_org, self.encoder)
         x = F.dropout(x, self.dropout, training=self.training)
         x = torch.cat([att(x, adj) for att in self.attentions], dim=1)
         x = F.dropout(x, self.dropout, training=self.training)
