@@ -12,7 +12,7 @@ class GAT(nn.Module):
         self.dropout = dropout
 
         self.encoder = nn.Parameter(torch.zeros(size=(nfeat, nhid)))
-        nn.init.xavier_uniform_(self.W.data, gain=1.414)
+        nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
 
         self.attentions = [GraphAttentionLayer(nhid, nhid, dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
         for i, attention in enumerate(self.attentions):
