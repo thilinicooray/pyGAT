@@ -37,7 +37,6 @@ class GraphAttentionLayer(nn.Module):
         u = torch.mm(input, self.U)
         v = torch.mm(input, self.V)
         h = torch.mm(u*v, self.P)
-        print('h :', h.size())
 
         N = h.size()[0]
 
