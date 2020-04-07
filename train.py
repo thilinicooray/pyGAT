@@ -71,10 +71,10 @@ if args.cuda:
     idx_val = idx_val.cuda()
     idx_test = idx_test.cuda()
 
-    ngpus = 2
+    '''ngpus = 2
     device_array = [i for i in range(0,ngpus)]
 
-    model = torch.nn.DataParallel(model, device_ids=device_array)
+    model = torch.nn.DataParallel(model, device_ids=device_array)'''
 
 features, adj, labels = Variable(features), Variable(adj), Variable(labels)
 
