@@ -14,6 +14,9 @@ class GAT(nn.Module):
         self.encoder = nn.Parameter(torch.zeros(size=(nfeat, nhid)))
         nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
 
+        self.updater = nn.Parameter(torch.zeros(size=(nhid, nhid)))
+        nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
+
         self.attentions = [GraphAttentionLayer(nhid, nhid, dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
         for i, attention in enumerate(self.attentions):
             self.add_module('attention_{}'.format(i), attention)
@@ -25,7 +28,7 @@ class GAT(nn.Module):
         x = F.dropout(x, self.dropout, training=self.training)
         x = torch.cat([att(x, adj) for att in self.attentions], dim=1)
         x = F.dropout(x, self.dropout, training=self.training)
-
+        x = torch.mm(x, self.updater)
         x = F.elu(self.out_att(x, adj))
         return F.log_softmax(x, dim=1)
 
