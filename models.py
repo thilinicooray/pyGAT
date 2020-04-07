@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from layers import GraphAttentionLayer, SpGraphAttentionLayer
+from classifier import SimpleClassifier
 
 
 class GAT(nn.Module):
@@ -14,22 +15,22 @@ class GAT(nn.Module):
         self.encoder = nn.Parameter(torch.zeros(size=(nfeat, nhid)))
         nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
 
-        self.updater = nn.Parameter(torch.zeros(size=(nhid * nheads, nhid)))
-        nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
-
         self.attentions = [GraphAttentionLayer(nhid, nhid, dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
         for i, attention in enumerate(self.attentions):
             self.add_module('attention_{}'.format(i), attention)
 
-        self.out_att = GraphAttentionLayer(nhid , nclass, dropout=dropout, alpha=alpha, concat=False)
+        #self.out_att = GraphAttentionLayer(nhid , nclass, dropout=dropout, alpha=alpha, concat=False)
+        self.classifier = SimpleClassifier(
+            nhid * nheads, 2 * nhid * nheads, nclass, 0.5)
 
     def forward(self, x_org, adj):
         x = torch.mm(x_org, self.encoder)
         x = F.dropout(x, self.dropout, training=self.training)
         x = torch.cat([att(x, adj) for att in self.attentions], dim=1)
-        x = F.dropout(x, self.dropout, training=self.training)
-        x = torch.mm(x, self.updater)
-        x = F.elu(self.out_att(x, adj))
+        #x = F.dropout(x, self.dropout, training=self.training)
+        #x = F.elu(self.out_att(x, adj))
+
+        x = self.classifier(x)
         return F.log_softmax(x, dim=1)
 
 
