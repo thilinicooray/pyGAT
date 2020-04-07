@@ -25,6 +25,7 @@ class GraphAttentionLayer(nn.Module):
         self.leakyrelu = nn.LeakyReLU(self.alpha)
 
     def forward(self, input, adj):
+        print('input size :', input.size(), self.W.data.size())
         h = torch.mm(input, self.W)
         N = h.size()[0]
 
