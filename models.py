@@ -14,7 +14,7 @@ class GAT(nn.Module):
         self.encoder = nn.Parameter(torch.zeros(size=(nfeat, nhid)))
         nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
 
-        self.updater = nn.Parameter(torch.zeros(size=(nhid, nhid)))
+        self.updater = nn.Parameter(torch.zeros(size=(nhid, nhid * nheads)))
         nn.init.xavier_uniform_(self.encoder.data, gain=1.414)
 
         self.attentions = [GraphAttentionLayer(nhid, nhid, dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
