@@ -18,7 +18,7 @@ class GAT(nn.Module):
         for i, attention in enumerate(self.attentions):
             self.add_module('attention_{}'.format(i), attention)
 
-        self.out_att = GraphAttentionLayer(nhid * nheads + nfeat, nclass, dropout=dropout, alpha=alpha, concat=False)
+        self.out_att = GraphAttentionLayer(nhid * nheads, nclass, dropout=dropout, alpha=alpha, concat=False)
 
     def forward(self, x_org, adj):
         x = torch.mm(x_org, self.encoder)
