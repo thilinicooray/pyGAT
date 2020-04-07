@@ -19,9 +19,9 @@ class GraphAttentionLayer(nn.Module):
 
         #self.W = nn.Parameter(torch.zeros(size=(in_features, out_features)))
 
-        self.U = nn.Parameter(torch.zeros(size=(in_features, out_features)))
-        self.V = nn.Parameter(torch.zeros(size=(in_features, out_features)))
-        self.P = nn.Parameter(torch.zeros(size=(out_features, out_features)))
+        self.U = nn.Parameter(torch.zeros(size=(in_features, out_features//4)))
+        self.V = nn.Parameter(torch.zeros(size=(in_features, out_features//4)))
+        self.P = nn.Parameter(torch.zeros(size=(out_features//4, out_features)))
 
         #nn.init.xavier_uniform_(self.W.data, gain=1.414)
         nn.init.xavier_uniform_(self.U.data, gain=1.414)
