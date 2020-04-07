@@ -19,9 +19,9 @@ class GraphAttentionLayer(nn.Module):
 
         #self.W = nn.Parameter(torch.zeros(size=(in_features, out_features)))
 
-        self.U = nn.Parameter(torch.zeros(size=(in_features, out_features//2)))
-        self.V = nn.Parameter(torch.zeros(size=(in_features, out_features//2)))
-        self.P = nn.Parameter(torch.zeros(size=(out_features//2, out_features)))
+        self.U = nn.Parameter(torch.zeros(size=(in_features, out_features)))
+        self.V = nn.Parameter(torch.zeros(size=(in_features, out_features)))
+        self.P = nn.Parameter(torch.zeros(size=(out_features, out_features)))
 
         #nn.init.xavier_uniform_(self.W.data, gain=1.414)
         nn.init.xavier_uniform_(self.U.data, gain=1.414)
@@ -41,7 +41,7 @@ class GraphAttentionLayer(nn.Module):
         v = torch.mm(input, self.V)
         h = torch.mm(torch.sigmoid(u) * torch.sigmoid(v), self.P)
 
-        print('h val ', h[0,:5])
+        #print('h val ', h[0,:5])
 
         N = h.size()[0]
 
