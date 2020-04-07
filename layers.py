@@ -17,16 +17,28 @@ class GraphAttentionLayer(nn.Module):
         self.alpha = alpha
         self.concat = concat
 
-        self.W = nn.Parameter(torch.zeros(size=(in_features, out_features)))
-        nn.init.xavier_uniform_(self.W.data, gain=1.414)
+        #self.W = nn.Parameter(torch.zeros(size=(in_features, out_features)))
+
+        self.U = nn.Parameter(torch.zeros(size=(in_features, out_features//4)))
+        self.V = nn.Parameter(torch.zeros(size=(in_features, out_features//4)))
+        self.P = nn.Parameter(torch.zeros(size=(out_features//4, out_features)))
+
+        #nn.init.xavier_uniform_(self.W.data, gain=1.414)
+        nn.init.xavier_uniform_(self.U.data, gain=1.414)
+        nn.init.xavier_uniform_(self.V.data, gain=1.414)
+        nn.init.xavier_uniform_(self.P.data, gain=1.414)
         self.a = nn.Parameter(torch.zeros(size=(2*out_features, 1)))
         nn.init.xavier_uniform_(self.a.data, gain=1.414)
 
         self.leakyrelu = nn.LeakyReLU(self.alpha)
 
     def forward(self, input, adj):
-        print('input size :', input.size(), self.W.data.size())
-        h = torch.mm(input, self.W)
+        #h = torch.mm(input, self.W)
+        u = torch.mm(input, self.U)
+        v = torch.mm(input, self.V)
+        h = torch.mm(u*v, self.V)
+        print('h :', h.size())
+
         N = h.size()[0]
 
         a_input = torch.cat([h.repeat(1, N).view(N * N, -1), h.repeat(N, 1)], dim=1).view(N, -1, 2 * self.out_features)
